@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SCI Login Page</title>
+    <link type="text/css" href="signin.css" rel="stylesheet">
+
+    <!-- Okta widget CSS and scripts -->
+    <!-- Latest CDN production Javascript and CSS -->
+    <script src="https://global.oktacdn.com/okta-signin-widget/3.1.0/js/okta-sign-in.min.js" type="text/javascript"></script>
+    <link href="https://global.oktacdn.com/okta-signin-widget/3.1.0/css/okta-sign-in.min.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+    <div id="widget-container"></div>
+
+    <script>var config = {
+      baseUrl: 'https://scipoc.okta.com',
+      logo: '//logo.clearbit.com/sci-corp.com',
+      el: '#widget-container',
+      features: {
+        passwordlessAuth: true,
+        registration: false,
+        rememberMe: true,
+        autoPush: true,
+        //multiOptionalFactorEnroll: true,
+        //selfServiceUnlock: true,
+        //smsRecovery: true,
+        //callRecovery: true,
+      }
+    }
+    var signIn = new OktaSignIn(config);
+    signIn.showSignInToGetTokens({
+        clientId: '0oa1hqnx4op4Q8avt0h8',
+        redirectUri: 'http://localhost:8080/authorization-code/callback',
+
+        // Return an access token from the authorization server
+        getAccessToken: true,
+
+        // Return an ID token from the authorization server
+        getIdToken: true,
+
+        scope: 'openid profile'
+    });</script>    
+    <br>
+</body>
+</html>
