@@ -1,10 +1,10 @@
 ﻿using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json.Linq;
+using System.IdentityModel.Tokens.Jwt;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -24,7 +24,7 @@ namespace Forms45OIDCExample.TokenFlow
 
         public string GetAuthorizeUrl(string sessionToken)
         {
-            var builder = new UriBuilder(_authority + "/v1/authorize");
+            var builder = new UriBuilder(_authority + "/oauth2/v1/authorize");
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["client_id"] = _clientId;
             query["response_type"] = "code";
@@ -41,7 +41,7 @@ namespace Forms45OIDCExample.TokenFlow
         public async Task<TokenModel> ObtainTokens(string authCode)
         {
             var tm = new TokenModel();
-            var url = _authority + "/v1/token";
+            var url = _authority + "/oauth2/v1/token";
             var parameters = new Dictionary<string, string> {
                 { "code", authCode },
                 { "client_id", _clientId },
@@ -93,18 +93,20 @@ namespace Forms45OIDCExample.TokenFlow
             var tm = new TokenModel();
             Task.Run(async () =>
            {
-               var accessToken = await ValidateToken(accTok.Value, "api://default");
+               //var accessToken = await ValidateToken(accTok.Value, _authority);
                var idToken = await ValidateToken(idTok.Value, _clientId);
 
-               if (accessToken == null)
-               {
-                   Console.WriteLine("Invalid Access token");
-               }
-               else
-               {
-                    // Additional validation...
-                    tm.AccessToken = accessToken;
-               }
+
+               //if (accessToken == null)
+               //{
+               //    Console.WriteLine("Invalid Access token");
+               //}
+               //else
+               //{
+               //     // Additional validation...
+               //     tm.AccessToken = accessToken;
+               //}
+
                if (idToken == null)
                {
                    Console.WriteLine("Invalid ID token");
@@ -126,7 +128,7 @@ namespace Forms45OIDCExample.TokenFlow
             var issuer = _authority;
 
             var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                issuer + "/.well-known/oauth-authorization-server",
+                issuer + "/.well-known/openid-configuration",
                 new OpenIdConnectConfigurationRetriever(),
                 new HttpDocumentRetriever());
 

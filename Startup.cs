@@ -1,5 +1,6 @@
 ﻿using IdentityModel.Client;
 using Microsoft.AspNet.Identity;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
@@ -16,7 +17,7 @@ using System.Security.Claims;
 
 namespace Forms45OIDCExample
 {
- 
+
     public class Startup
     {
         // These values are stored in Web.config. Make sure you update them!
@@ -29,6 +30,7 @@ namespace Forms45OIDCExample
         {
             // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=316888
             ConfigureAuth(app);
+            IdentityModelEventSource.ShowPII = true; //Add this line
         }
 
         public void ConfigureAuth(IAppBuilder app)
@@ -52,7 +54,7 @@ namespace Forms45OIDCExample
                     AuthorizationCodeReceived = async n =>
                     {
                         // Exchange code for access and ID tokens
-                        var tokenClient = new TokenClient($"{_authority}/v1/token", _clientId, _clientSecret);
+                        var tokenClient = new TokenClient($"{_authority}/oauth2/v1/token", _clientId, _clientSecret);
 
                         var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(n.Code, _redirectUri);
                         if (tokenResponse.IsError)
@@ -60,7 +62,7 @@ namespace Forms45OIDCExample
                             throw new Exception(tokenResponse.Error);
                         }
 
-                        var userInfoClient = new UserInfoClient($"{_authority}/v1/userinfo");
+                        var userInfoClient = new UserInfoClient($"{_authority}/oauth2/v1/userinfo");
                         var userInfoResponse = await userInfoClient.GetAsync(tokenResponse.AccessToken);
 
                         var claims = new List<Claim>(userInfoResponse.Claims)

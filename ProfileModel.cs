@@ -13,15 +13,21 @@ namespace Forms45OIDCExample
         {
             //TODO: build properties from the incoming tokens
             Id = model.IDToken.Subject;
-            Login = model.AccessToken.Subject;
-            FirstName = model.IDToken.Claims.First(x => x.Type == "firstName").Value;
-            LastName = model.IDToken.Claims.First(x => x.Type == "lastName").Value;
+            Login = model.IDToken.Claims.First(x => x.Type == "preferred_username").Value;
             PrimaryEmail = model.IDToken.Claims.First(x => x.Type == "email").Value;
-            SecondaryEmail = model.IDToken.Claims.First(x => x.Type == "secondaryEmail").Value;
-            MobilePhone = model.IDToken.Claims.First(x => x.Type == "mobilePhone").Value;
-            SecureWord = model.IDToken.Claims.First(x => x.Type == "secureWord").Value;
-            SecureImage = model.IDToken.Claims.First(x => x.Type == "secureImage").Value;
-
+            var fullname = model.IDToken.Claims.First(x => x.Type == "name").Value;
+            //FirstName = model.IDToken.Claims.First(x => x.Type == "firstName").Value;
+            //LastName = model.IDToken.Claims.First(x => x.Type == "lastName").Value;
+            FirstName = fullname.Split(' ')[0];
+            LastName = fullname.Split(' ')[1];
+            //SecondaryEmail = model.IDToken.Claims.First(x => x.Type == "secondaryEmail").Value;
+            SecondaryEmail = PrimaryEmail;
+            //MobilePhone = model.IDToken.Claims.First(x => x.Type == "mobilePhone").Value;
+            MobilePhone = "Missing";
+            //SecureWord = model.IDToken.Claims.First(x => x.Type == "secureWord").Value;
+            //SecureImage = model.IDToken.Claims.First(x => x.Type == "secureImage").Value;
+            SecureWord = "Missing";
+            SecureImage = "ball";
         }
         public string Id { get; set; }
         public string Login { get; set; }
